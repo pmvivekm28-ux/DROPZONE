@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAURYA - DROPZONE PANEL</title>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        :root {
+            --bg: #050505;
+            --card-bg: rgba(20, 20, 25, 0.7);
+            --accent: #bc13fe;
+            --accent-glow: rgba(188, 19, 254, 0.5);
+            --text: #ffffff;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Particle Background */
+        #particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; background: radial-gradient(circle at center, #1a0b2e 0%, #050505 100%);
+        }
+
+        /* Login Screen */
+        #login-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; backdrop-filter: blur(10px);
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            padding: 2rem; border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--accent);
+            color: white; padding: 12px; border-radius: 8px;
+            width: 250px; margin: 10px 0; outline: none;
+        }
+
+        .neon-btn {
+            background: linear-gradient(45deg, var(--accent), #ff00ff);
+            border: none; color: white; padding: 12px 30px;
+            border-radius: 8px; cursor: pointer; font-weight: bold;
+            text-transform: uppercase; transition: 0.3s;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .neon-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--accent); }
+
+        /* Main Panel */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        header { text-align: center; margin-bottom: 40px; }
+        header img { width: 80px; filter: drop-shadow(0 0 10px var(--accent)); }
+        header h1 { letter-spacing: 5px; color: var(--accent); margin-top: 10px; }
+
+        .input-section {
+            display: flex; gap: 20px; justify-content: center; margin-bottom: 40px;
+            background: var(--card-bg); padding: 20px; border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .emote-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .emote-card {
+            background: var(--card-bg);
+            border-radius: 12px; padding: 15px;
+            text-align: center; cursor: pointer;
+            transition: 0.3s; border: 1px solid rgba(188, 19, 254, 0.2);
+            position: relative; overflow: hidden;
+        }
+
+        .emote-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .emote-card img { width: 100%; height: auto; border-radius: 8px; }
+        .emote-card p { margin-top: 10px; font-size: 0.8rem; font-weight: bold; }
+
+        .loading-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.7);
+            display: none; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<div id="login-overlay">
+    <div class="glass-card">
+        <h2 style="color:var(--accent)">MAURYA AUTH</h2>
+        <input type="password" id="passInput" placeholder="Enter Access Code">
+        <br>
+        <button class="neon-btn" onclick="login()">Enter Panel</button>
+    </div>
+</div>
+
+<div class="container" id="main-content" style="display:none;">
+    <header>
+        <img src="https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051001.png" alt="Logo">
+        <h1>DROPZONE</h1>
+    </header>
+
+    <div class="input-section">
+        <input type="text" id="teamCode" placeholder="Team Code">
+        <input type="text" id="uidInput" placeholder="User UID">
+    </div>
+
+    <div class="emote-grid" id="grid">
+        </div>
+</div>
+
+<script>
+    [span_0](start_span)// Data Extracted from emote.txt[span_0](end_span)
+    const emotes = [
+        { name: "Kungfu", id: "909000041" },
+        { name: "I Heart You", id: "909000045" },
+        { name: "Tea Time", id: "909000046" },
+        { name: "Doggie", id: "909000052" },
+        { name: "Make It Rain", id: "909000056" },
+        { name: "Captain Booyah", id: "909000058" },
+        { name: "Bhangra", id: "909000061" },
+        { name: "Cobra Dance", id: "909000071" },
+        { name: "AK Max", id: "909000063" },
+        { name: "Scar Max", id: "909000068" },
+        { name: "XM8 Max", id: "909000085" },
+        { name: "M1014 Max", id: "909000081" },
+        { name: "M4A1 Max", id: "909033001" },
+        { name: "Flowers of Love", id: "909000010" },
+        { name: "FFWC Throne", id: "909000014" },
+        { name: "Power of Money", id: "909000038" }
+    ];
+
+    [span_1](start_span)// Source Images from docx[span_1](end_span)
+    const iconBase = "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/";
+
+    function login() {
+        if(document.getElementById('passInput').value === "55") {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            renderEmotes();
+        } else {
+            alert("Wrong Password");
+        }
+    }
+
+    function renderEmotes() {
+        const grid = document.getElementById('grid');
+        emotes.forEach(emote => {
+            const card = document.createElement('div');
+            card.className = 'emote-card';
+            // Mapping ID to the CDN structure provided in source 1
+            const imgUrl = `${iconBase}${emote.id}.png`; 
+            
+            card.innerHTML = `
+                <img src="${imgUrl}" onerror="this.src='https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051015.png'">
+                <p>${emote.name}</p>
+                <div class="loading-overlay" id="load-${emote.id}">⌛</div>
+            `;
+            card.onclick = () => triggerEmote(emote.id, emote.name);
+            grid.appendChild(card);
+        });
+    }
+
+    async function triggerEmote(id, name) {
+        const tc = document.getElementById('teamCode').value;
+        const uid = document.getElementById('uidInput').value;
+        const loader = document.getElementById(`load-${id}`);
+
+        if(!tc || !uid) {
+            Toastify({ text: "Please fill TC and UID", background: "red" }).showToast();
+            return;
+        }
+
+        loader.style.display = 'flex';
+
+        try {
+            // Sequence 1: Main API
+            await fetch(`https://epapi-ytxx.onrender.com/join?tc=${tc}&uid1=${uid}&id=${id}`);
+            
+            // Sequence 2: Bot Team Code
+            await fetch(`https://epapi-ytxx.onrender.com/join?tc=1694161&uid1=${uid}&id=${id}`);
+
+            // Delay 1 second for feedback
+            setTimeout(() => {
+                loader.style.display = 'none';
+                Toastify({ 
+                    text: `Successfully sent ${name}`, 
+                    style: { background: "linear-gradient(to right, #bc13fe, #ff00ff)" } 
+                }).showToast();
+            }, 1000);
+
+        } catch (err) {
+            loader.style.display = 'none';
+            Toastify({ text: "API Error", background: "red" }).showToast();
+        }
+    }
+</script>
+</body>
+</html>
