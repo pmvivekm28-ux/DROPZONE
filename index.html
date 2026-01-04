@@ -3,92 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAURYA - TCP CLAN BOT (FIXED)</title>
+    <title>DROPZONE V - COMPLETE LIST</title>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #bc13fe; --m: #ff00ff; --bg: #050505; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; min-height: 100vh; }
-        
-        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: rgba(20,20,25,0.98); padding: 40px; border-radius: 24px; border: 2px solid var(--p); text-align: center; box-shadow: 0 0 30px var(--p); }
+        :root { --p: #bc13fe; --neon: #00f2ff; --bg: #050505; --card: rgba(255, 255, 255, 0.05); }
+        body { background: var(--bg); color: white; font-family: 'Rajdhani', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        body::before { content: ""; position: fixed; inset: 0; background: linear-gradient(rgba(188, 19, 254, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(188, 19, 254, 0.05) 1px, transparent 1px); background-size: 30px 30px; z-index: -1; animation: moveGrid 10s linear infinite; }
+        @keyframes moveGrid { from { transform: translateY(0); } to { transform: translateY(30px); } }
 
-        #main-app { display: none; padding: 20px; text-align: center; }
-        .header h1 { letter-spacing: 12px; color: var(--p); text-shadow: 0 0 15px var(--p); }
-        
-        .status-panel { background: rgba(188, 19, 254, 0.1); padding: 15px; border-radius: 12px; margin: 10px auto; max-width: 650px; border: 1px solid var(--p); font-size: 11px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        
-        .input-bar { background: #111; padding: 20px; border-radius: 15px; margin: 20px auto; max-width: 800px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border: 1px solid #333; }
-        input { padding: 14px; background: #1a1a1a; border: 1px solid #444; color: white; border-radius: 10px; outline: none; text-align: center; }
+        /* Login Screen (Fixed) */
+        #auth-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: rgba(20, 20, 20, 0.8); padding: 40px 25px; border-radius: 20px; border: 2px solid var(--p); width: 85%; max-width: 360px; text-align: center; box-shadow: 0 0 30px rgba(188, 19, 254, 0.3); backdrop-filter: blur(10px); }
+        .top-title { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 900; color: white; text-shadow: 0 0 15px var(--p); margin-bottom: 30px; }
+        input { width: 100%; padding: 15px; background: rgba(0,0,0,0.6); border: 1px solid #444; border-radius: 12px; color: var(--neon); font-size: 18px; text-align: center; box-sizing: border-box; margin-bottom: 20px; transition: 0.3s; }
+        .btn-unlock { background: var(--p); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: bold; font-family: 'Orbitron', sans-serif; cursor: pointer; text-transform: uppercase; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; max-width: 1200px; margin: 0 auto; padding-bottom: 50px; }
-        .card { background: #111; padding: 15px; border-radius: 15px; border: 1px solid #222; cursor: pointer; transition: 0.3s; position: relative; }
-        .card:hover { border-color: var(--p); transform: translateY(-5px); }
-        .card img { width: 100%; border-radius: 10px; margin-bottom: 8px; }
+        /* Main App */
+        #main-app { display: none; width: 100%; padding: 20px; box-sizing: border-box; max-width: 500px; }
+        .app-header { font-family: 'Orbitron', sans-serif; font-size: 32px; font-weight: 900; text-align: center; background: linear-gradient(to right, #fff, var(--p)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
 
-        .loading-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; font-size: 10px; color: var(--p); font-weight: bold; border-radius: 15px; }
+        /* Tabs System */
+        .tab-container { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid #333; color: white; padding: 12px; border-radius: 10px; cursor: pointer; font-family: 'Orbitron'; font-size: 12px; flex: 1; transition: 0.3s; }
+        .tab-btn.active { background: var(--p); border-color: var(--p); box-shadow: 0 0 15px var(--p); }
+
+        .search-bar { background: rgba(20,20,20,0.9); border: 1px solid #333; padding: 12px; border-radius: 10px; font-family: 'Rajdhani'; color: white; font-size: 16px; width: 100%; box-sizing: border-box; margin-bottom: 20px; text-align: center;}
+        
+        .grid { display: none; grid-template-columns: repeat(2, 1fr); gap: 12px; padding-bottom: 40px;}
+        .grid.active { display: grid; }
+        
+        .card { background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; text-align: center; transition: 0.3s; cursor: pointer; }
+        .card:hover { border-color: var(--p); transform: translateY(-3px); }
+        .card img { width: 75px; height: 75px; object-fit: contain; }
+        .card-name { margin-top: 10px; font-size: 12px; font-weight: 900; color: #eee; text-transform: uppercase; }
+        .footer { margin-top: 30px; padding: 20px; color: #555; font-size: 11px; text-align: center; border-top: 1px solid #222; }
     </style>
 </head>
 <body>
 
 <div id="auth-screen">
     <div class="login-box">
-        <h2 style="color:var(--p)">TCP TERMINAL v2</h2>
-        <input type="password" id="pass" placeholder="PASSWORD">
-        <br><br>
-        <button style="background:var(--p); color:white; border:none; padding:12px 40px; border-radius:8px; cursor:pointer;" onclick="login()">UNLOCK</button>
+        <div class="top-title">TCP TERMINAL</div>
+        <input type="password" id="pass" placeholder="ENTER KEY">
+        <button class="btn-unlock" onclick="login()">UNLOCK BOT</button>
+        <p style="margin-top:20px; font-size:13px; color:#aaa;">To get password click Telegram channel</p>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+            <a href="https://t.me/makhala_live" style="background:#0088cc; color:white; padding:10px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:bold;">JOIN TELEGRAM</a>
+            <a href="https://www.youtube.com/@Vivek_maurya_108" style="background:#ff0000; color:white; padding:10px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:bold;">SUBSCRIBE YOUTUBE</a>
+        </div>
     </div>
 </div>
 
 <div id="main-app">
-    <header class="header">
-        <h1>DROPZONE</h1>
-        <div class="status-panel">
-            <span>CLAN: <b>3047678958</b></span>
-            <span>BOT: <b id="bot-status" style="color: #ffaa00;">CONNECTING...</b></span>
-        </div>
-    </header>
-
-    <div class="input-bar">
-        <input type="number" id="tc" placeholder="TEAM CODE">
-        <input type="number" id="uid" placeholder="PLAYER UID">
+    <div class="app-header">DROPZONE V</div>
+    <div style="color:var(--p); text-align:center; font-weight:bold; font-size:10px; letter-spacing:4px; margin-bottom:20px;">INJECTOR SYSTEM ACTIVE</div>
+    
+    <div style="display:flex; gap:10px;">
+        <input type="number" id="tc" placeholder="TEAM CODE" style="font-size:14px; flex:1;">
+        <input type="number" id="uid" placeholder="UID" style="font-size:14px; flex:1;">
     </div>
 
-    <div id="emoteGrid" class="grid"></div>
+    <div class="tab-container">
+        <button id="btn-evo" class="tab-btn active" onclick="showTab('evo')">EVO GUNS</button>
+        <button id="btn-normal" class="tab-btn" onclick="showTab('normal')">EMOTES</button>
+    </div>
+
+    <input type="text" id="search" class="search-bar" placeholder="🔍 Search Items..." oninput="filterItems()">
+
+    <div id="evoGrid" class="grid active"></div>
+    <div id="normalGrid" class="grid"></div>
+    
+    <div class="footer">CREATOR: <b>VIVEK MAURYA</b><br>VERSION 5.0 - ULTRA SPEED</div>
 </div>
 
 <script>
     const CLAN_UID = "3047678958";
     const MAIN_API = "https://epapi-ytxx.onrender.com/join";
-    const BOT_URL = "http://176.100.37.91:30200/join";
-    
-    // Proxy for Timeout & CORS handling
-    const PROXY = "https://corsproxy.io/?"; 
 
-    const emotes = [
-        {id: "909000063", name: "AK Max"}, {id: "909000068", name: "Scar Max"},
-        {id: "909000081", name: "M1014 Max"}, {id: "909035007", name: "Shotgun Max"},
-        {id: "909000085", name: "XM8 Max"}, {id: "909040010", name: "MP40 Max"}
+    const items = [
+        // ALL NORMAL EMOTES
+        { id: "909000041", name: "Kungfu", cat: "normal" },
+        { id: "909000045", name: "I Heart You", cat: "normal" },
+        { id: "909000046", name: "Tea Time", cat: "normal" },
+        { id: "909000052", name: "Doggie", cat: "normal" },
+        { id: "909000055", name: "I'm Rich!", cat: "normal" },
+        { id: "909000056", name: "Make It Rain", cat: "normal" },
+        { id: "909000057", name: "Dust Off", cat: "normal" },
+        { id: "909000058", name: "Captain Booyah", cat: "normal" },
+        { id: "909000060", name: "BOOYAH!", cat: "normal" },
+        { id: "909000061", name: "Bhangra", cat: "normal" },
+        { id: "909000062", name: "Piece of Cake", cat: "normal" },
+        { id: "909000064", name: "I'm Saitama!", cat: "normal" },
+        { id: "909000065", name: "The Victor", cat: "normal" },
+        { id: "909000066", name: "Siii!", cat: "normal" },
+        { id: "909000067", name: "Obliteration", cat: "normal" },
+        { id: "909000069", name: "Top Scorer", cat: "normal" },
+        { id: "909000070", name: "Triple Kicks", cat: "normal" },
+        { id: "909000071", name: "Cobra Dance", cat: "normal" },
+        { id: "909000072", name: "Predator Pulse", cat: "normal" },
+        { id: "909000073", name: "Ground Punch", cat: "normal" },
+        { id: "909000074", name: "The Biker", cat: "normal" },
+        { id: "909000076", name: "One-Finger Pushup", cat: "normal" },
+        { id: "909000077", name: "Stage Time", cat: "normal" },
+        { id: "909000078", name: "Booyah! Balloon", cat: "normal" },
+        { id: "909000079", name: "More Practice", cat: "normal" },
+        { id: "909000080", name: "FFWS 2021", cat: "normal" },
+        { id: "909000086", name: "Mythos Four", cat: "normal" },
+        { id: "909000087", name: "Champion Grab", cat: "normal" },
+        { id: "909000088", name: "Win and Chill", cat: "normal" },
+        { id: "909000089", name: "Hadouken", cat: "normal" },
+        { id: "909000091", name: "Big Smash", cat: "normal" },
+        { id: "909000093", name: "All In Control", cat: "normal" },
+        { id: "909000094", name: "Debugging", cat: "normal" },
+        { id: "909000095", name: "Waggor Wave", cat: "normal" },
+        { id: "909000096", name: "Crazy Guitar", cat: "normal" },
+        { id: "909000121", name: "Dribble King", cat: "normal" },
+        { id: "909000123", name: "Mind It!", cat: "normal" },
+        { id: "909000124", name: "Golden Combo", cat: "normal" },
+        { id: "909000125", name: "Sick Moves", cat: "normal" },
+        { id: "909000128", name: "Ruler’s Flag", cat: "normal" },
+        { id: "909000129", name: "Money Throw", cat: "normal" },
+        { id: "909000130", name: "Endless Bullets", cat: "normal" },
+        { id: "909000133", name: "Fire Slam", cat: "normal" },
+        { id: "909000134", name: "Heartbroken", cat: "normal" },
+        { id: "909000135", name: "Rock Paper Scissors", cat: "normal" },
+        { id: "909000136", name: "Shattered Reality", cat: "normal" },
+        { id: "909000137", name: "Halo of Music", cat: "normal" },
+        { id: "909000138", name: "Burnt BBQ", cat: "normal" },
+        { id: "909000139", name: "Switching Steps", cat: "normal" },
+        { id: "909000140", name: "Creed Slay", cat: "normal" },
+        { id: "909000141", name: "Leap of Fail", cat: "normal" },
+        { id: "909000143", name: "Helicopter Shot", cat: "normal" },
+        { id: "909000144", name: "Kungfu Tigers", cat: "normal" },
+        { id: "909000145", name: "Possessed Warrior", cat: "normal" },
+        { id: "909000002", name: "LOL", cat: "normal" },
+        { id: "909000003", name: "Provoke", cat: "normal" },
+        { id: "909000010", name: "Flowers of Love", cat: "normal" },
+        { id: "909000014", name: "FFWC Throne", cat: "normal" },
+        { id: "909000032", name: "Selfie", cat: "normal" },
+        { id: "909000034", name: "Pirate’s Flag", cat: "normal" },
+        { id: "909000036", name: "Top DJ", cat: "normal" },
+        { id: "909000038", name: "Power of Money", cat: "normal" },
+        { id: "909000039", name: "Eat My Dust", cat: "normal" },
+        { id: "909034010", name: "BR Heroic", cat: "normal" },
+        { id: "909034011", name: "BR Master", cat: "normal" },
+        { id: "909034012", name: "CS Heroic", cat: "normal" },
+        { id: "909034013", name: "CS Master", cat: "normal" },
+        { id: "90903011", name: "Eternal Descent", cat: "normal" },
+        { id: "90903012", name: "Swaggy Dance", cat: "normal" },
+        { id: "90903014", name: "Admire", cat: "normal" },
+        { id: "90903001", name: "Reindeer Float", cat: "normal" },
+        { id: "90903002", name: "Bamboo Dance", cat: "normal" },
+        { id: "90903003", name: "Dance of Constellation", cat: "normal" },
+        { id: "90903004", name: "Trophy Grab", cat: "normal" },
+        { id: "90903005", name: "Starry Hands", cat: "normal" },
+        { id: "90903006", name: "Yum", cat: "normal" },
+        { id: "90903007", name: "Happy Dancing", cat: "normal" },
+        { id: "90903008", name: "Juggle", cat: "normal" },
+        { id: "90903009", name: "Neon Sign", cat: "normal" },
+
+        // ALL EVO GUNS FROM DOCUMENT
+        { id: "909000063", name: "AK Max", cat: "evo" },
+        { id: "909035007", name: "Shotgun Max", cat: "evo" },
+        { id: "909000068", name: "Scar Max", cat: "evo" },
+        { id: "909000085", name: "XM8 Max", cat: "evo" },
+        { id: "909038012", name: "G18 Max", cat: "evo" },
+        { id: "909035012", name: "AN94 Max", cat: "evo" },
+        { id: "909033002", name: "MP5 Max", cat: "evo" },
+        { id: "909051003", name: "N60 Max", cat: "evo" },
+        { id: "909037011", name: "Fist Max", cat: "evo" },
+        { id: "909000081", name: "M1014 Max", cat: "evo" },
+        { id: "909000090", name: "Famas Max", cat: "evo" },
+        { id: "909049010", name: "P90 Max", cat: "evo" },
+        { id: "909038010", name: "Thompson Max", cat: "evo" },
+        { id: "909033001", name: "M4A1 Max", cat: "evo" },
+        { id: "909000098", name: "UMP Max", cat: "evo" },
+        { id: "909040010", name: "New M40 Max", cat: "evo" },
+        { id: "909045001", name: "Parafal Max", cat: "evo" },
+        { id: "909042008", name: "WD Picker Max", cat: "evo" }
     ];
 
     function login() {
         if(document.getElementById('pass').value === "55") {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
-            document.getElementById('bot-status').innerText = "PROXY ACTIVE";
-            render();
+            renderGrids(items);
+        } else {
+            Toastify({text: "WRONG KEY!", background: "red"}).showToast();
         }
     }
 
-    function render() {
-        const grid = document.getElementById('emoteGrid');
-        grid.innerHTML = emotes.map(e => `
-            <div class="card" onclick="triggerInfection('${e.id}', '${e.name}')">
-                <div class="loading-overlay" id="loader-${e.id}">SYNCING...</div>
-                <img src="https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/${e.id}.png">
-                <p>${e.name}</p>
-            </div>
-        `).join('');
+    function showTab(type) {
+        document.getElementById('evoGrid').classList.remove('active');
+        document.getElementById('normalGrid').classList.remove('active');
+        document.getElementById('btn-evo').classList.remove('active');
+        document.getElementById('btn-normal').classList.remove('active');
+        document.getElementById(type + 'Grid').classList.add('active');
+        document.getElementById('btn-' + type).classList.add('active');
+    }
+
+    function renderGrids(data) {
+        document.getElementById('evoGrid').innerHTML = data.filter(e => e.cat === 'evo').map(e => createCard(e)).join('');
+        document.getElementById('normalGrid').innerHTML = data.filter(e => e.cat === 'normal').map(e => createCard(e)).join('');
+    }
+
+    function createCard(e) {
+        return `
+            <div class="card" onclick="runCommand('${e.id}', '${e.name}')">
+                <img src="https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/${e.id}.png" onerror="this.src='https://via.placeholder.com/75/222/bc13fe?text=X'">
+                <div class="card-name">${e.name}</div>
+            </div>`;
+    }
+
+    function filterItems() {
+        const term = document.getElementById('search').value.toLowerCase();
+        const filtered = items.filter(e => e.name.toLowerCase().includes(term));
+        renderGrids(filtered);
+    }
+
+    function runCommand(eid, name) {
+        const tc = document.getElementById('tc').value;
+        const uid = document.getElementById('uid').value;
+        if(!tc || !uid) return Toastify({text: "ENTER TC & UID!", background: "orange"}).showToast();
+        const params = `?tc=${tc}&uid1=${uid}&emote_id=${eid}&eid=${eid}&clan=${CLAN_UID}`;
+        fetch(MAIN_API + params, { mode: 'no-cors' });
+        Toastify({text: `INJECTED: ${name}`, style: { background: "var(--p)" }}).showToast();
+    }
+</script>
+</body>
+</html>
     }
 
     async function triggerInfection(eid, name) {
