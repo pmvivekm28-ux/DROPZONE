@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAURYA - TCP CLAN BOT (FIXED)</title>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        :root { --p: #bc13fe; --m: #ff00ff; --bg: #050505; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; min-height: 100vh; }
+        
+        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: rgba(20,20,25,0.98); padding: 40px; border-radius: 24px; border: 2px solid var(--p); text-align: center; box-shadow: 0 0 30px var(--p); }
+
+        #main-app { display: none; padding: 20px; text-align: center; }
+        .header h1 { letter-spacing: 12px; color: var(--p); text-shadow: 0 0 15px var(--p); }
+        
+        .status-panel { background: rgba(188, 19, 254, 0.1); padding: 15px; border-radius: 12px; margin: 10px auto; max-width: 650px; border: 1px solid var(--p); font-size: 11px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        .input-bar { background: #111; padding: 20px; border-radius: 15px; margin: 20px auto; max-width: 800px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border: 1px solid #333; }
+        input { padding: 14px; background: #1a1a1a; border: 1px solid #444; color: white; border-radius: 10px; outline: none; text-align: center; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; max-width: 1200px; margin: 0 auto; padding-bottom: 50px; }
+        .card { background: #111; padding: 15px; border-radius: 15px; border: 1px solid #222; cursor: pointer; transition: 0.3s; position: relative; }
+        .card:hover { border-color: var(--p); transform: translateY(-5px); }
+        .card img { width: 100%; border-radius: 10px; margin-bottom: 8px; }
+
+        .loading-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; font-size: 10px; color: var(--p); font-weight: bold; border-radius: 15px; }
+    </style>
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="login-box">
+        <h2 style="color:var(--p)">TCP TERMINAL v2</h2>
+        <input type="password" id="pass" placeholder="PASSWORD">
+        <br><br>
+        <button style="background:var(--p); color:white; border:none; padding:12px 40px; border-radius:8px; cursor:pointer;" onclick="login()">UNLOCK</button>
+    </div>
+</div>
+
+<div id="main-app">
+    <header class="header">
+        <h1>DROPZONE</h1>
+        <div class="status-panel">
+            <span>CLAN: <b>3047678958</b></span>
+            <span>BOT: <b id="bot-status" style="color: #ffaa00;">CONNECTING...</b></span>
+        </div>
+    </header>
+
+    <div class="input-bar">
+        <input type="number" id="tc" placeholder="TEAM CODE">
+        <input type="number" id="uid" placeholder="PLAYER UID">
+    </div>
+
+    <div id="emoteGrid" class="grid"></div>
+</div>
+
+<script>
+    const CLAN_UID = "3047678958";
+    const MAIN_API = "https://epapi-ytxx.onrender.com/join";
+    const BOT_URL = "http://176.100.37.91:30200/join";
+    
+    // Proxy for Timeout & CORS handling
+    const PROXY = "https://corsproxy.io/?"; 
+
+    const emotes = [
+        {id: "909000063", name: "AK Max"}, {id: "909000068", name: "Scar Max"},
+        {id: "909000081", name: "M1014 Max"}, {id: "909035007", name: "Shotgun Max"},
+        {id: "909000085", name: "XM8 Max"}, {id: "909040010", name: "MP40 Max"}
+    ];
+
+    function login() {
+        if(document.getElementById('pass').value === "55") {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('bot-status').innerText = "PROXY ACTIVE";
+            render();
+        }
+    }
+
+    function render() {
+        const grid = document.getElementById('emoteGrid');
+        grid.innerHTML = emotes.map(e => `
+            <div class="card" onclick="triggerInfection('${e.id}', '${e.name}')">
+                <div class="loading-overlay" id="loader-${e.id}">SYNCING...</div>
+                <img src="https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/${e.id}.png">
+                <p>${e.name}</p>
+            </div>
+        `).join('');
+    }
+
+    async function triggerInfection(eid, name) {
+        const tc = document.getElementById('tc').value;
+        const uid = document.getElementById('uid').value;
+        if(!tc || !uid) return Toastify({text: "Missing TC/UID", background: "red"}).showToast();
+
+        const loader = document.getElementById(`loader-${eid}`);
+        loader.style.display = 'flex';
+
+        // Fix: Dual Parameter Mapping (emote_id + eid both) for compatibility
+        const mainParams = `?tc=${tc}&uid1=${uid}&emote_id=${eid}&eid=${eid}`;
+        const botParams = `?tc=1694161&uid1=${uid}&emote_id=${eid}&clan=${CLAN_UID}`;
+
+        try {
+            // 1. Send Main Request (No timeout, high priority)
+            fetch(MAIN_API + mainParams, { mode: 'no-cors' });
+
+            // 2. Send Bot Request via Proxy with 5s Timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+            try {
+                await fetch(PROXY + encodeURIComponent(BOT_URL + botParams), { 
+                    signal: controller.signal,
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                });
+                console.log("Bot Response Received");
+            } catch (botErr) {
+                console.warn("Bot Server Timeout/Unreachable - Falling back to Main API only.");
+            }
+
+            clearTimeout(timeoutId);
+            
+            setTimeout(() => {
+                loader.style.display = 'none';
+                Toastify({
+                    text: `${name} Action Sent Successfully`,
+                    style: { background: "linear-gradient(to right, #bc13fe, #ff00ff)" }
+                }).showToast();
+            }, 500);
+
+        } catch (err) {
+            loader.style.display = 'none';
+            Toastify({text: "Network Error", background: "red"}).showToast();
+        }
+    }
+</script>
+</body>
+</html>
